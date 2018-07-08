@@ -12,7 +12,7 @@ namespace LogMongoDB.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
-            log4net.LogManager.GetLogger("teste").Debug("teste");
+            log4net.LogManager.GetLogger("test").Debug("test");
             return new string[] { "value1", "value2" };
         }
 

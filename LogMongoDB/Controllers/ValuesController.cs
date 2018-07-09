@@ -12,7 +12,13 @@ namespace LogMongoDB.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
+            DadosLog test = new DadosLog
+            {
+                User = "CY47",
+                StackTrace = "ok"
+            };
             log4net.LogManager.GetLogger("test").Debug("test");
+            log4net.LogManager.GetLogger("test").Debug(test);
             return new string[] { "value1", "value2" };
         }
 
@@ -36,5 +42,11 @@ namespace LogMongoDB.Controllers
         public void Delete(int id)
         {
         }
+    }
+
+    internal class DadosLog
+    {
+        public string User { get; internal set; }
+        public string StackTrace { get; internal set; }
     }
 }

@@ -213,6 +213,7 @@
     <Compile Include="LogErrorEntry.cs" />
     <Compile Include="MongoAppender.cs" />
     <Compile Include="MongoAppenderField.cs" />
+    <Compile Include="MyCustomDateTimeSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

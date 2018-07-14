@@ -1,6 +1,7 @@
 ﻿using log4net.Appender;
 using log4net.Core;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -134,6 +135,11 @@ namespace LogMongoDB
         /// <returns>The Mongo database</returns>
         protected virtual IMongoDatabase GetDatabase()
         {
+            BsonClassMap.RegisterClassMap<LogErrorEntry>(cm => {
+                cm.AutoMap();
+                cm.GetMemberMap(c => c.TimeStamp).SetSerializer(new MyCustomDateTimeSerializer());
+            });
+
             string connectionString = GetConnectionString();
 
             MongoUrl url = MongoUrl.Create(connectionString);

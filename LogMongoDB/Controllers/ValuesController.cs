@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,12 +13,12 @@ namespace LogMongoDB.Controllers
         // GET api/values
         public IEnumerable<string> Get()
         {
-            DadosLog test = new DadosLog
+            LogErrorEntry test = new LogErrorEntry
             {
-                User = "CY47",
-                StackTrace = "ok"
+                ID = "CY47",
+                TimeStamp = DateTime.Now
             };
-            log4net.LogManager.GetLogger("test").Debug("test");
+            // log4net.LogManager.GetLogger("test").Debug("test");
             log4net.LogManager.GetLogger("test").Debug(test);
             return new string[] { "value1", "value2" };
         }
@@ -48,5 +49,10 @@ namespace LogMongoDB.Controllers
     {
         public string User { get; internal set; }
         public string StackTrace { get; internal set; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
     }
 }

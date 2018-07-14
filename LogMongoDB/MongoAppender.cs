@@ -42,7 +42,7 @@ namespace LogMongoDB
         /// <summary>
         /// Gets or sets Mongo collection to write to. Initialised when the appender is activated
         /// </summary>
-        private IMongoCollection<object> Collection { get; set; }
+        private IMongoCollection<LogErrorEntry> Collection { get; set; }
 
         /// <summary>
         /// Adds an entry from the config to the list of fields to log
@@ -82,7 +82,8 @@ namespace LogMongoDB
         /// <param name="loggingEvent">The logging event</param>
         protected override void Append(LoggingEvent loggingEvent)
         {
-            BsonDocument record = BuildBsonDocument(loggingEvent);
+            //BsonDocument record = BuildBsonDocument(loggingEvent);
+            var record = loggingEvent.MessageObject as LogErrorEntry;
             Collection.InsertOne(record);
         }
 
@@ -109,10 +110,10 @@ namespace LogMongoDB
         /// in the configuration then it defaults to 'logs'.
         /// </summary>
         /// <returns>The Mongo collection</returns>
-        protected virtual IMongoCollection<object> GetCollection()
+        protected virtual IMongoCollection<LogErrorEntry> GetCollection()
         {
             IMongoDatabase db = GetDatabase();
-            IMongoCollection<object> collection = db.GetCollection<object>(CollectionName ?? "logs");
+            IMongoCollection<LogErrorEntry> collection = db.GetCollection<LogErrorEntry>(CollectionName ?? "logs");
             return collection;
         }
 

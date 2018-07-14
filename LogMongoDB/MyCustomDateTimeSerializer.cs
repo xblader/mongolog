@@ -9,7 +9,7 @@ using System.Web;
 
 namespace LogMongoDB
 {
-    public class MyCustomDateTimeSerializer : StructSerializerBase<DateTime>, IRepresentationConfigurable<DateTimeSerializer>
+    public class MyCustomDateTimeSerializer : StructSerializerBase<DateTime>, IRepresentationConfigurable<MyCustomDateTimeSerializer>
     {
         // private constants
         private static class Flags
@@ -319,7 +319,7 @@ namespace LogMongoDB
         /// <returns>
         /// The reconfigured serializer.
         /// </returns>
-        public DateTimeSerializer WithDateOnly(bool dateOnly)
+        public MyCustomDateTimeSerializer WithDateOnly(bool dateOnly)
         {
             if (dateOnly == _dateOnly)
             {
@@ -327,7 +327,7 @@ namespace LogMongoDB
             }
             else
             {
-                return new DateTimeSerializer(dateOnly, _representation);
+                return new MyCustomDateTimeSerializer(dateOnly, _representation);
             }
         }
 
@@ -339,7 +339,7 @@ namespace LogMongoDB
         /// <returns>
         /// The reconfigured serializer.
         /// </returns>
-        public DateTimeSerializer WithDateOnly(bool dateOnly, BsonType representation)
+        public MyCustomDateTimeSerializer WithDateOnly(bool dateOnly, BsonType representation)
         {
             if (dateOnly == _dateOnly && representation == _representation)
             {
@@ -347,7 +347,7 @@ namespace LogMongoDB
             }
             else
             {
-                return new DateTimeSerializer(dateOnly, representation);
+                return new MyCustomDateTimeSerializer(dateOnly, representation);
             }
         }
 
@@ -358,7 +358,7 @@ namespace LogMongoDB
         /// <returns>
         /// The reconfigured serializer.
         /// </returns>
-        public DateTimeSerializer WithKind(DateTimeKind kind)
+        public MyCustomDateTimeSerializer WithKind(DateTimeKind kind)
         {
             if (kind == _kind && _dateOnly == false)
             {
@@ -366,7 +366,7 @@ namespace LogMongoDB
             }
             else
             {
-                return new DateTimeSerializer(kind, _representation);
+                return new MyCustomDateTimeSerializer(kind, _representation);
             }
         }
 
@@ -378,7 +378,7 @@ namespace LogMongoDB
         /// <returns>
         /// The reconfigured serializer.
         /// </returns>
-        public DateTimeSerializer WithKind(DateTimeKind kind, BsonType representation)
+        public MyCustomDateTimeSerializer WithKind(DateTimeKind kind, BsonType representation)
         {
             if (kind == _kind && representation == _representation && _dateOnly == false)
             {
@@ -386,7 +386,7 @@ namespace LogMongoDB
             }
             else
             {
-                return new DateTimeSerializer(kind, representation);
+                return new MyCustomDateTimeSerializer(kind, representation);
             }
         }
 
@@ -395,7 +395,7 @@ namespace LogMongoDB
         /// </summary>
         /// <param name="representation">The representation.</param>
         /// <returns>The reconfigured serializer.</returns>
-        public DateTimeSerializer WithRepresentation(BsonType representation)
+        public MyCustomDateTimeSerializer WithRepresentation(BsonType representation)
         {
             if (representation == _representation)
             {
@@ -405,24 +405,13 @@ namespace LogMongoDB
             {
                 if (_dateOnly)
                 {
-                    return new DateTimeSerializer(_dateOnly, representation);
+                    return new MyCustomDateTimeSerializer(_dateOnly, representation);
                 }
                 else
                 {
-                    return new DateTimeSerializer(_kind, representation);
+                    return new MyCustomDateTimeSerializer(_kind, representation);
                 }
             }
-        }
-
-        // explicit interface implementations
-        IBsonSerializer IRepresentationConfigurable.WithRepresentation(BsonType representation)
-        {
-            return WithRepresentation(representation);
-        }
-
-        public DateTimeSerializer WithRepresentation(BsonType representation)
-        {
-            throw new NotImplementedException();
         }
 
         IBsonSerializer IRepresentationConfigurable.WithRepresentation(BsonType representation)

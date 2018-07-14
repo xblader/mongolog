@@ -253,63 +253,14 @@ namespace LogMongoDB
         {
             var bsonWriter = context.Writer;
 
-            DateTime utcDateTime;
-            if (_dateOnly)
-            {
-                if (value.TimeOfDay != TimeSpan.Zero)
-                {
-                    throw new BsonSerializationException("TimeOfDay component is not zero.");
-                }
-                utcDateTime = DateTime.SpecifyKind(value, DateTimeKind.Utc); // not ToLocalTime
-            }
-            else
-            {
-                utcDateTime = BsonUtils.ToUniversalTime(value);
-            }
-            var millisecondsSinceEpoch = BsonUtils.ToMillisecondsSinceEpoch(utcDateTime);
+            var millisecondsSinceEpoch = BsonUtils.ToMillisecondsSinceEpoch(value.ToLocalTime());
 
-            switch (_representation)
-            {
-                case BsonType.DateTime:
-                    bsonWriter.WriteDateTime(millisecondsSinceEpoch);
-                    break;
-
-                case BsonType.Document:
-                    bsonWriter.WriteStartDocument();
-                    bsonWriter.WriteDateTime("DateTime", millisecondsSinceEpoch);
-                    bsonWriter.WriteInt64("Ticks", utcDateTime.Ticks);
-                    bsonWriter.WriteEndDocument();
-                    break;
-
-                case BsonType.Int64:
-                    bsonWriter.WriteInt64(utcDateTime.Ticks);
-                    break;
-
-                case BsonType.String:
-                    if (_dateOnly)
-                    {
-                        bsonWriter.WriteString(value.ToString("yyyy-MM-dd"));
-                    }
-                    else
-                    {
-                        if (value == DateTime.MinValue || value == DateTime.MaxValue)
-                        {
-                            // serialize MinValue and MaxValue as Unspecified so we do NOT get the time zone offset
-                            value = DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
-                        }
-                        else if (value.Kind == DateTimeKind.Unspecified)
-                        {
-                            // serialize Unspecified as Local se we get the time zone offset
-                            value = DateTime.SpecifyKind(value, DateTimeKind.Local);
-                        }
-                        bsonWriter.WriteString(JsonConvert.ToString(value));
-                    }
-                    break;
-
-                default:
-                    var message = string.Format("'{0}' is not a valid DateTime representation.", _representation);
-                    throw new BsonSerializationException(message);
-            }
+            bsonWriter.WriteStartDocument();
+            bsonWriter.WriteDateTime("DateTime", millisecondsSinceEpoch);
+            bsonWriter.WriteInt64("Day", value.Day);
+            bsonWriter.WriteInt64("Month", value.Month);
+            bsonWriter.WriteInt64("Year", value.Year);
+            bsonWriter.WriteEndDocument();
         }
 
         /// <summary>

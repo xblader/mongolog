@@ -137,7 +137,7 @@ namespace LogMongoDB
         {
             BsonClassMap.RegisterClassMap<LogErrorEntry>(cm => {
                 cm.AutoMap();
-                cm.GetMemberMap(c => c.TimeStamp).SetSerializer(new MyCustomDateTimeSerializer());
+                cm.GetMemberMap(c => c.TimeStamp).SetSerializer(new MyCustomDateTimeSerializer(DateTimeKind.Local));
             });
 
             string connectionString = GetConnectionString();

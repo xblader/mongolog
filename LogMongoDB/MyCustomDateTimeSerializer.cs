@@ -180,14 +180,15 @@ namespace LogMongoDB
             var bsonReader = context.Reader;
 
             bsonReader.ReadStartDocument();
-            long value = bsonReader.ReadDateTime("DateTime");
+            DateTime value = new BsonDateTime(bsonReader.ReadDateTime("DateTime")).ToLocalTime();
+            
             int day = bsonReader.ReadInt32("Day");
             int month = bsonReader.ReadInt32("Month");
             int year = bsonReader.ReadInt32("Year");
             
             bsonReader.ReadEndDocument();
 
-            return new DateTime(year, month, day);
+            return value;
         }
 
         /// <summary>

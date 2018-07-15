@@ -182,9 +182,9 @@ namespace LogMongoDB
             bsonReader.ReadStartDocument();
             DateTime value = new BsonDateTime(bsonReader.ReadDateTime("DateTime")).ToLocalTime();
             
-            int day = bsonReader.ReadInt32("Day");
-            int month = bsonReader.ReadInt32("Month");
-            int year = bsonReader.ReadInt32("Year");
+            //int day = bsonReader.ReadInt32("Day");
+            //int month = bsonReader.ReadInt32("Month");
+            //int year = bsonReader.ReadInt32("Year");
             
             bsonReader.ReadEndDocument();
 

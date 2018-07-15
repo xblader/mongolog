@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.Driver;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace LogMongoDB.Controllers
 {
     public class ValuesController : ApiController
     {
+        private readonly MongoAdapter adapter = new MongoAdapter();
         // GET api/values
         public IEnumerable<string> Get()
         {
@@ -20,6 +22,8 @@ namespace LogMongoDB.Controllers
             };
             // log4net.LogManager.GetLogger("test").Debug("test");
             log4net.LogManager.GetLogger("test").Debug(test);
+
+            var results = adapter.GetCollection("logs").Find(x => x.ID == "CY47").ToList();
             return new string[] { "value1", "value2" };
         }
 

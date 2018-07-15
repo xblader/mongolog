@@ -27,6 +27,7 @@ namespace LogMongoDB
         private readonly bool _dateOnly;
         private readonly SerializerHelper _helper;
         private readonly Int64Serializer _int64Serializer = new Int64Serializer();
+        private readonly Int32Serializer _int32Serializer = new Int32Serializer();
         private readonly DateTimeKind _kind;
         private readonly BsonType _representation;
 
@@ -177,70 +178,16 @@ namespace LogMongoDB
         public override DateTime Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
         {
             var bsonReader = context.Reader;
-            DateTime value;
 
-            var bsonType = bsonReader.GetCurrentBsonType();
-            switch (bsonType)
-            {
-                case BsonType.DateTime:
-                    // use an intermediate BsonDateTime so MinValue and MaxValue are handled correctly
-                    value = new BsonDateTime(bsonReader.ReadDateTime()).ToUniversalTime();
-                    break;
+            bsonReader.ReadStartDocument();
+            long value = bsonReader.ReadDateTime("DateTime");
+            int day = bsonReader.ReadInt32("Day");
+            int month = bsonReader.ReadInt32("Month");
+            int year = bsonReader.ReadInt32("Year");
+            
+            bsonReader.ReadEndDocument();
 
-                case BsonType.Document:
-                    value = default(DateTime);
-                    _helper.DeserializeMembers(context, (elementName, flag) =>
-                    {
-                        switch (flag)
-                        {
-                            case Flags.DateTime: bsonReader.SkipValue(); break; // ignore value (use Ticks instead)
-                            case Flags.Ticks: value = new DateTime(_int64Serializer.Deserialize(context), DateTimeKind.Utc); break;
-                        }
-                    });
-                    break;
-
-                case BsonType.Int64:
-                    value = DateTime.SpecifyKind(new DateTime(bsonReader.ReadInt64()), DateTimeKind.Utc);
-                    break;
-
-                case BsonType.String:
-                    if (_dateOnly)
-                    {
-                        value = DateTime.SpecifyKind(DateTime.ParseExact(bsonReader.ReadString(), "yyyy-MM-dd", null), DateTimeKind.Utc);
-                    }
-                    else
-                    {
-                        value = JsonConvert.ToDateTime(bsonReader.ReadString());
-                    }
-                    break;
-
-                default:
-                    throw CreateCannotDeserializeFromBsonTypeException(bsonType);
-            }
-
-            if (_dateOnly)
-            {
-                if (value.TimeOfDay != TimeSpan.Zero)
-                {
-                    throw new FormatException("TimeOfDay component for DateOnly DateTime value is not zero.");
-                }
-                value = DateTime.SpecifyKind(value, _kind); // not ToLocalTime or ToUniversalTime!
-            }
-            else
-            {
-                switch (_kind)
-                {
-                    case DateTimeKind.Local:
-                    case DateTimeKind.Unspecified:
-                        value = DateTime.SpecifyKind(BsonUtils.ToLocalTime(value), _kind);
-                        break;
-                    case DateTimeKind.Utc:
-                        value = BsonUtils.ToUniversalTime(value);
-                        break;
-                }
-            }
-
-            return value;
+            return new DateTime(year, month, day);
         }
 
         /// <summary>
@@ -257,9 +204,9 @@ namespace LogMongoDB
 
             bsonWriter.WriteStartDocument();
             bsonWriter.WriteDateTime("DateTime", millisecondsSinceEpoch);
-            bsonWriter.WriteInt64("Day", value.Day);
-            bsonWriter.WriteInt64("Month", value.Month);
-            bsonWriter.WriteInt64("Year", value.Year);
+            bsonWriter.WriteInt32("Day", value.Day);
+            bsonWriter.WriteInt32("Month", value.Month);
+            bsonWriter.WriteInt32("Year", value.Year);
             bsonWriter.WriteEndDocument();
         }
 

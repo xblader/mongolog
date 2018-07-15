@@ -211,6 +211,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="LogErrorEntry.cs" />
+    <Compile Include="MongoAdapter.cs" />
     <Compile Include="MongoAppender.cs" />
     <Compile Include="MongoAppenderField.cs" />
     <Compile Include="MyCustomDateTimeSerializer.cs" />

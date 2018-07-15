@@ -22,6 +22,8 @@ namespace LogMongoDB
         /// </summary>
         private readonly List<MongoAppenderField> fields = new List<MongoAppenderField>();
 
+        private readonly MongoAdapter adapter = new MongoAdapter();
+
         /// <summary>
         /// Gets or sets the MongoDB database connection in the format:
         /// mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]
